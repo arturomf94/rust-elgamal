@@ -150,6 +150,17 @@ impl ElGamal {
             pp: c.pp.clone(),
         }
     }
+
+    pub fn rerandomise(c: &ElGamalCiphertext) -> Result<ElGamalCiphertext, ElGamalError> {
+        let y = BigInt::sample_below(&c.pp.q);
+        let c1 = BigInt::mod_pow(&c.c1, &y, &c.pp.p);
+        let c2 = BigInt::mod_pow(&c.c2, &y, &c.pp.p);
+        Ok(ElGamalCiphertext {
+            c1,
+            c2,
+            pp: c.pp.clone(),
+        })
+    }
 }
 
 impl ExponentElGamal {
