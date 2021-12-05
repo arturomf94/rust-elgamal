@@ -289,6 +289,20 @@ mod tests {
     }
 
     #[test]
+    fn test_elgamal_rfc7919_rerandomisation() {
+        let group_id = SupportedGroups::FFDHE2048;
+        let pp = ElGamalPP::generate_from_rfc7919(group_id);
+        let keypair = ElGamalKeyPair::generate(&pp);
+        let message = BigInt::from(1);
+        let first_c = ElGamal::encrypt(&message, &keypair.pk).unwrap();
+        let second_c = ElGamal::rerandomise(&first_c).unwrap();
+        let first_message_tag = ElGamal::decrypt(&first_c, &keypair.sk).unwrap();
+        let second_message_tag = ElGamal::decrypt(&second_c, &keypair.sk).unwrap();
+        assert_eq!(message, first_message_tag);
+        assert_eq!(message, second_message_tag);
+    }
+
+    #[test]
     fn test_mul() {
         let group_id = SupportedGroups::FFDHE2048;
         let pp = ElGamalPP::generate_from_rfc7919(group_id);
